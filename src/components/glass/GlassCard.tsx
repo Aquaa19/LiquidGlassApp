@@ -43,6 +43,21 @@ const getRoundedValue = (rounded: RoundedVariant): number => {
 };
 
 /**
+ * Helper to simulate a diffused orb inside the card for the blobColor property
+ */
+const InternalSoftBlob = ({ color }: { color: string }) => {
+  const size = 160;
+  return (
+    <View style={[styles.ambientBlobContainer, { width: size, height: size }]}>
+      <View style={{ position: 'absolute', width: size, height: size, borderRadius: size / 2, backgroundColor: color, opacity: 0.05 }} />
+      <View style={{ position: 'absolute', width: size * 0.8, height: size * 0.8, borderRadius: size * 0.4, backgroundColor: color, opacity: 0.1 }} />
+      <View style={{ position: 'absolute', width: size * 0.6, height: size * 0.6, borderRadius: size * 0.3, backgroundColor: color, opacity: 0.15 }} />
+      <View style={{ position: 'absolute', width: size * 0.4, height: size * 0.4, borderRadius: size * 0.2, backgroundColor: color, opacity: 0.2 }} />
+    </View>
+  );
+};
+
+/**
  * GlassCard Component
  * A premium surface component implementing the frosted glass effect with 
  * configurable accents, interactivity, and decorative background elements.
@@ -96,15 +111,7 @@ const GlassCard: React.FC<GlassCardProps> = ({
         ]}
       >
         {/* Decorative Internal Ambient Blob (Simulated Blur) */}
-        {blobColor && (
-          <View 
-            style={[
-              styles.ambientBlob,
-              { backgroundColor: blobColor }
-            ]}
-            pointerEvents="none"
-          />
-        )}
+        {blobColor && <InternalSoftBlob color={blobColor} />}
         
         {/* Content Layer */}
         <View style={styles.contentLayer}>
@@ -119,25 +126,30 @@ const styles = StyleSheet.create({
   container: {
     position: 'relative',
     overflow: 'hidden',
-    backgroundColor: theme.colors.glass.fillMedium, // Simulated backdrop-blur bg
-    borderTopWidth: 1,
-    borderLeftWidth: 1,
+    // Hardcoded exact values to enforce the glass look natively
+    backgroundColor: 'rgba(255, 255, 255, 0.45)', // Translucent white core
+    borderTopWidth: 1.5,
+    borderLeftWidth: 1.5,
     borderRightWidth: 1,
     borderBottomWidth: 1,
-    borderTopColor: theme.colors.glass.borderTopLeft,
-    borderLeftColor: theme.colors.glass.borderTopLeft,
-    borderRightColor: theme.colors.glass.borderBottomRight,
-    borderBottomColor: theme.colors.glass.borderBottomRight,
-    ...theme.elevation.ambientGlow, // Uses standard shadow since inset shadows aren't native
+    borderTopColor: 'rgba(255, 255, 255, 0.8)', // Light catches top-left
+    borderLeftColor: 'rgba(255, 255, 255, 0.8)',
+    borderRightColor: 'rgba(79, 55, 138, 0.05)', // Shadows drop bottom-right
+    borderBottomColor: 'rgba(79, 55, 138, 0.05)',
+    // iOS ambient shadow
+    shadowColor: '#1F2687',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.05,
+    shadowRadius: 20,
+    // EXTREMELY CRITICAL: Set elevation to 0 to prevent Android from overriding the glass with a harsh black shadow
+    elevation: 0, 
   },
-  ambientBlob: {
+  ambientBlobContainer: {
     position: 'absolute',
     right: -40,
     top: -40,
-    width: 160,
-    height: 160,
-    borderRadius: 80,
-    opacity: 0.3, // Lower opacity to simulate the blurred diffusion
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   contentLayer: {
     zIndex: 10,

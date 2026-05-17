@@ -8,7 +8,7 @@ import Icon from '../core/Icon';
 export type EventVariant = 'primary' | 'secondary' | 'tertiary' | 'blue';
 
 export interface CalendarEventItemProps {
-  /** Time range (e.g., "09:00 AM - 10:30 AM") */
+  /** Time range (e.g., "09:00 - 10:30") */
   timeRange: string;
   /** Subject or session title */
   title: string;
@@ -150,19 +150,20 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     padding: 16,
     gap: 4,
-    backgroundColor: theme.colors.glass.fillLow, // bg-white/10
+    // Hardcoded exact values to enforce the glass look natively
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // bg-white/10
     borderRadius: theme.rounded.default, // 8px (rounded-lg)
-    borderTopWidth: 1,
+    borderTopWidth: 1.5,
     borderRightWidth: 1,
     borderBottomWidth: 1,
     borderLeftWidth: 4, // Accent border
-    borderTopColor: theme.colors.glass.borderTopLeft,
-    borderRightColor: theme.colors.glass.borderBottomRight,
-    borderBottomColor: theme.colors.glass.borderBottomRight,
-    ...theme.elevation.ambientNeutral, // shadow-[0_4px_16px_rgba(0,0,0,0.02)]
+    borderTopColor: 'rgba(255, 255, 255, 0.8)', // Light catches top-left
+    borderRightColor: 'rgba(79, 55, 138, 0.05)', // Shadows drop bottom-right
+    borderBottomColor: 'rgba(79, 55, 138, 0.05)',
+    elevation: 0, // EXTREMELY CRITICAL: Prevent Android dark shadow
   },
   containerPressed: {
-    backgroundColor: theme.colors.glass.fillMedium, // Equivalent to hover:bg-white/20
+    backgroundColor: 'rgba(255, 255, 255, 0.2)', // Equivalent to hover:bg-white/20
   },
   topSection: {
     width: '100%',

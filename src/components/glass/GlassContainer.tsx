@@ -26,18 +26,19 @@ const getPaddingValue = (padding: 'none' | 'unit' | 'element-gap' | 'gutter'): n
 };
 
 const getIntensityFill = (intensity: 'low' | 'medium' | 'high'): string => {
+  // Using explicit rgba values to enforce true translucency natively
   switch (intensity) {
-    case 'low': return theme.colors.glass.fillLow;
-    case 'medium': return theme.colors.glass.fillMedium;
-    case 'high': return theme.colors.glass.fillHigh;
-    default: return theme.colors.glass.fillMedium;
+    case 'low': return 'rgba(255, 255, 255, 0.2)';
+    case 'medium': return 'rgba(255, 255, 255, 0.45)';
+    case 'high': return 'rgba(255, 255, 255, 0.7)';
+    default: return 'rgba(255, 255, 255, 0.45)';
   }
 };
 
 /**
  * GlassContainer Component
  * Provides a frosted glass surface utilizing the Liquid Glass design tokens.
- * Note: Simulates glass via precise opacities as native backdrop-blur requires external native modules.
+ * Note: Simulates glass via precise opacities and directional borders.
  */
 const GlassContainer: React.FC<GlassContainerProps> = ({
   children,
@@ -71,14 +72,18 @@ const styles = StyleSheet.create({
     position: 'relative',
     overflow: 'hidden',
     borderRadius: theme.rounded.card,
+    elevation: 0, // EXTREMELY CRITICAL: Prevent Android dark shadow
   },
   borderStyles: {
-    borderWidth: 1,
-    // Using a unified border color as RN doesn't support gradient borders natively without SVG.
-    // The top-left highlight is prioritized as per DESIGN.md
-    borderColor: theme.colors.glass.borderTopLeft, 
-    borderBottomColor: theme.colors.glass.borderBottomRight,
-    borderRightColor: theme.colors.glass.borderBottomRight,
+    // Directional borders to simulate light catching on the top-left edge
+    borderTopWidth: 1.5,
+    borderLeftWidth: 1.5,
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.8)', // Light catches top-left
+    borderLeftColor: 'rgba(255, 255, 255, 0.8)',
+    borderRightColor: 'rgba(79, 55, 138, 0.05)', // Shadows drop bottom-right
+    borderBottomColor: 'rgba(79, 55, 138, 0.05)',
   },
   contentLayer: {
     zIndex: 10,

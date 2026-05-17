@@ -51,7 +51,7 @@ const Icon: React.FC<IconProps> = ({
   const isCustomSize = typeof size === 'number';
   const iconSize = isCustomSize ? size : sizeMap[size as string];
   
-  const fontFamily = fill ? 'MaterialSymbols-Filled' : 'MaterialSymbols-Outlined';
+  const fontFamily = fill ? 'MaterialSymbols-Filled' : 'MaterialSymbolsOutlined';
 
   return (
     <Text

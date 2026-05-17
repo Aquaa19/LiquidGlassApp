@@ -14,6 +14,24 @@ interface ScreenWrapperProps {
 }
 
 /**
+ * Helper component to simulate a radial gradient / blurred blob 
+ * using concentric circles with decreasing opacity.
+ * This avoids needing external dependencies like react-native-svg or blur packages
+ * while still achieving the Liquid Glass diffused light aesthetic.
+ */
+const SoftBlob = ({ color, size, style }: { color: string, size: number, style?: any }) => {
+  return (
+    <View style={[{ width: size, height: size, alignItems: 'center', justifyContent: 'center', position: 'absolute' }, style]}>
+      <View style={{ position: 'absolute', width: size, height: size, borderRadius: size / 2, backgroundColor: color, opacity: 0.03 }} />
+      <View style={{ position: 'absolute', width: size * 0.8, height: size * 0.8, borderRadius: size * 0.4, backgroundColor: color, opacity: 0.06 }} />
+      <View style={{ position: 'absolute', width: size * 0.6, height: size * 0.6, borderRadius: size * 0.3, backgroundColor: color, opacity: 0.09 }} />
+      <View style={{ position: 'absolute', width: size * 0.4, height: size * 0.4, borderRadius: size * 0.2, backgroundColor: color, opacity: 0.12 }} />
+      <View style={{ position: 'absolute', width: size * 0.2, height: size * 0.2, borderRadius: size * 0.1, backgroundColor: color, opacity: 0.15 }} />
+    </View>
+  );
+};
+
+/**
  * Core ScreenWrapper Component
  * Handles the base layout, background atmospheric elements, and safe area padding.
  */
@@ -28,13 +46,25 @@ const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
       {atmospheric && (
         <View style={styles.ambientContainer} pointerEvents="none">
           {/* Top-Left Blob */}
-          <View style={[styles.blob, styles.topLeftBlob]} />
+          <SoftBlob 
+            color={theme.colors.primaryFixed} 
+            size={width * 1.5} 
+            style={{ top: -width * 0.5, left: -width * 0.5 }} 
+          />
           
           {/* Middle-Right Blob */}
-          <View style={[styles.blob, styles.middleRightBlob]} />
+          <SoftBlob 
+            color={theme.colors.secondaryFixed} 
+            size={width * 1.2} 
+            style={{ top: height * 0.2, right: -width * 0.4 }} 
+          />
           
           {/* Bottom-Center Gradient Orb */}
-          <View style={[styles.blob, styles.bottomCenterBlob]} />
+          <SoftBlob 
+            color={theme.colors.tertiaryFixed} 
+            size={width * 1.8} 
+            style={{ bottom: -width * 0.4, left: width * 0.1 }} 
+          />
         </View>
       )}
 
@@ -58,37 +88,6 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFill,
     overflow: 'hidden',
     zIndex: 0,
-  },
-  // In React Native, achieving severe blur without heavy external libraries is difficult.
-  // We simulate the "glowing blob" effect using large dimensions, absolute positioning, 
-  // and specific opacities derived from the design system's fixed/dim colors.
-  blob: {
-    position: 'absolute',
-    borderRadius: 9999, // Perfect circle
-  },
-  topLeftBlob: {
-    top: -100,
-    left: -100,
-    width: 500,
-    height: 500,
-    backgroundColor: theme.colors.primaryFixed,
-    opacity: 0.6,
-  },
-  middleRightBlob: {
-    top: height * 0.2, // 20% down
-    right: -50,
-    width: 400,
-    height: 400,
-    backgroundColor: theme.colors.secondaryFixed,
-    opacity: 0.6,
-  },
-  bottomCenterBlob: {
-    bottom: -200,
-    left: width * 0.2, // 20% across
-    width: 600,
-    height: 600,
-    backgroundColor: theme.colors.tertiaryFixed,
-    opacity: 0.4,
   },
   contentLayer: {
     flex: 1,

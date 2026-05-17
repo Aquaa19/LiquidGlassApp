@@ -2,29 +2,23 @@
 
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { View } from 'react-native';
-import Text from '../components/core/Text';
 
-// Placeholder Screens
-const StudentsListPlaceholder = () => (
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <Text variant="headline-md">Students List Screen</Text>
-  </View>
-);
+// Import actual screens built in Phase 5
+import StudentsListScreen from '../screens/Students/StudentsListScreen';
+import StudentDetailScreen from '../screens/Students/StudentDetailScreen';
 
-const StudentDetailPlaceholder = () => (
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <Text variant="headline-md">Student Detail Screen</Text>
-  </View>
-);
+export type StudentsStackParamList = {
+  StudentsList: undefined;
+  StudentDetail: { studentId: string };
+};
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<StudentsStackParamList>();
 
 const StudentsStack = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="StudentsList" component={StudentsListPlaceholder} />
-      <Stack.Screen name="StudentDetail" component={StudentDetailPlaceholder} />
+      <Stack.Screen name="StudentsList" component={StudentsListScreen} />
+      <Stack.Screen name="StudentDetail" component={StudentDetailScreen} />
     </Stack.Navigator>
   );
 };

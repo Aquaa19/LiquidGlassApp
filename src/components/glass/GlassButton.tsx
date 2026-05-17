@@ -101,8 +101,8 @@ const GlassButton: React.FC<GlassButtonProps> = ({
           pressed && !disabled && styles.pressed,
           // Apply glow effect
           glow && variant === 'primary' && styles.glowPrimary,
-          // Simulate glass active state
-          pressed && isGlass && !disabled && { backgroundColor: theme.colors.glass.fillHigh },
+          // Simulate glass active state using explicit rgba
+          pressed && isGlass && !disabled && { backgroundColor: 'rgba(255, 255, 255, 0.45)' },
         ]}
       >
         {({ pressed }) => (
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
   // Variants
   variant_primary: {
     backgroundColor: theme.colors.primary,
-    elevation: 4,
+    elevation: 0, // EXTREMELY CRITICAL: Prevent Android dark shadow
     shadowColor: theme.colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -189,23 +189,32 @@ const styles = StyleSheet.create({
   },
   variant_secondary: {
     backgroundColor: theme.colors.secondaryContainer,
-    elevation: 2,
+    elevation: 0, // EXTREMELY CRITICAL: Prevent Android dark shadow
     shadowColor: theme.colors.secondary,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
   },
   variant_glass: {
-    backgroundColor: theme.colors.glass.fillLow, // Simulates backdrop-blur
-    borderWidth: 1,
-    borderColor: theme.colors.glass.borderTopLeft,
+    // Hardcoded exact values to enforce the glass look natively
+    backgroundColor: 'rgba(255, 255, 255, 0.25)', 
+    borderTopWidth: 1.5,
+    borderLeftWidth: 1.5,
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.8)', // Light catches top-left
+    borderLeftColor: 'rgba(255, 255, 255, 0.8)',
+    borderRightColor: 'rgba(79, 55, 138, 0.05)', // Shadows drop bottom-right
+    borderBottomColor: 'rgba(79, 55, 138, 0.05)',
+    elevation: 0, // CRITICAL: Prevent Android dark shadow
   },
   variant_ghost: {
     backgroundColor: 'transparent',
+    elevation: 0,
   },
   variant_error: {
     backgroundColor: theme.colors.error,
-    elevation: 4,
+    elevation: 0, // EXTREMELY CRITICAL: Prevent Android dark shadow
     shadowColor: theme.colors.error,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -218,7 +227,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 20,
-    elevation: 8,
+    elevation: 0, // Must remain 0 to avoid harsh black overlays on Android
   },
 
   // Spacing

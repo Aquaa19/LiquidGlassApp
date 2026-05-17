@@ -1,12 +1,7 @@
 // src/screens/MoreScreen.tsx
 
 import React from 'react';
-import { 
-  ScrollView, 
-  StyleSheet, 
-  View, 
-  Pressable 
-} from 'react-native';
+import { ScrollView, StyleSheet, View, Pressable } from 'react-native';
 import { theme } from '../theme/theme';
 import ScreenWrapper from '../components/core/ScreenWrapper';
 import GlassHeader from '../components/glass/GlassHeader';

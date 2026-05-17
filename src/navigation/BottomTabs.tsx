@@ -2,18 +2,15 @@
 
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View } from 'react-native';
 import { theme } from '../theme/theme';
 import Icon from '../components/core/Icon';
-import Text from '../components/core/Text';
 import StudentsStack from './StudentsStack';
 
-// Placeholder Screens
-const Placeholder = ({ name }: { name: string }) => (
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <Text variant="headline-md">{name} Screen</Text>
-  </View>
-);
+// Import the actual screens we built in Phase 5
+import DashboardScreen from '../screens/DashboardScreen';
+import AttendanceScreen from '../screens/AttendanceScreen';
+import FeesScreen from '../screens/FeesScreen';
+import MoreScreen from '../screens/MoreScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -35,7 +32,7 @@ const BottomTabs = () => {
 
           if (route.name === 'Dashboard') iconName = 'dashboard';
           else if (route.name === 'StudentsTab') iconName = 'groups';
-          else if (route.name === 'Attendance') iconName = 'calendar_today';
+          else if (route.name === 'Attendance') iconName = 'how_to_reg';
           else if (route.name === 'Fees') iconName = 'payments';
           else if (route.name === 'More') iconName = 'menu';
 
@@ -43,15 +40,15 @@ const BottomTabs = () => {
         },
       })}
     >
-      <Tab.Screen name="Dashboard" component={() => <Placeholder name="Dashboard" />} />
+      <Tab.Screen name="Dashboard" component={DashboardScreen} />
       <Tab.Screen 
         name="StudentsTab" 
         component={StudentsStack} 
         options={{ tabBarLabel: 'Students' }} 
       />
-      <Tab.Screen name="Attendance" component={() => <Placeholder name="Attendance" />} />
-      <Tab.Screen name="Fees" component={() => <Placeholder name="Fees" />} />
-      <Tab.Screen name="More" component={() => <Placeholder name="More" />} />
+      <Tab.Screen name="Attendance" component={AttendanceScreen} />
+      <Tab.Screen name="Fees" component={FeesScreen} />
+      <Tab.Screen name="More" component={MoreScreen} />
     </Tab.Navigator>
   );
 };

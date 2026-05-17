@@ -39,6 +39,23 @@ const getVariantColor = (variant: StatCardProps['variant']): string => {
 };
 
 /**
+ * Helper to simulate a diffused orb inside the card for the blobColor property
+ */
+const InternalSoftBlob = ({ color, position }: { color: string, position: 'top-right' | 'bottom-left' }) => {
+  const size = 160;
+  const posStyle = position === 'top-right' ? { right: -40, top: -40 } : { left: -40, bottom: -40 };
+  
+  return (
+    <View style={[styles.ambientBlobContainer, posStyle, { width: size, height: size }]} pointerEvents="none">
+      <View style={{ position: 'absolute', width: size, height: size, borderRadius: size / 2, backgroundColor: color, opacity: 0.05 }} />
+      <View style={{ position: 'absolute', width: size * 0.8, height: size * 0.8, borderRadius: size * 0.4, backgroundColor: color, opacity: 0.1 }} />
+      <View style={{ position: 'absolute', width: size * 0.6, height: size * 0.6, borderRadius: size * 0.3, backgroundColor: color, opacity: 0.15 }} />
+      <View style={{ position: 'absolute', width: size * 0.4, height: size * 0.4, borderRadius: size * 0.2, backgroundColor: color, opacity: 0.2 }} />
+    </View>
+  );
+};
+
+/**
  * StatCard Component
  * A "Bento" style metric card that implements the frosted glass aesthetic.
  * Handles different dashboard card layouts natively.
@@ -58,20 +75,11 @@ const StatCard: React.FC<StatCardProps> = ({
   const isCircular = chartType === 'circular';
   const variantColor = getVariantColor(variant);
 
-  const isBlobTopRight = blobPosition === 'top-right';
-
   return (
     <View style={[styles.container, style]}>
-      {/* Decorative Atmospheric Blob */}
+      {/* Decorative Atmospheric Blob (Diffused Glow) */}
       {blobColor && (
-        <View 
-          style={[
-            styles.blob,
-            isBlobTopRight ? styles.blobTopRight : styles.blobBottomLeft,
-            { backgroundColor: blobColor }
-          ]}
-          pointerEvents="none"
-        />
+        <InternalSoftBlob color={blobColor} position={blobPosition} />
       )}
 
       {/* Internal Gloss Highlight Simulation */}
@@ -140,36 +148,27 @@ const styles = StyleSheet.create({
     padding: 32,
     minHeight: 200,
     justifyContent: 'space-between',
-    backgroundColor: theme.colors.glass.fillMedium,
+    // Hardcoded exact values to enforce the glass look natively
+    backgroundColor: 'rgba(255, 255, 255, 0.45)', // Translucent white core
     borderRadius: theme.rounded.card, // 26px
-    borderTopWidth: 1,
-    borderLeftWidth: 1,
+    borderTopWidth: 1.5,
+    borderLeftWidth: 1.5,
     borderRightWidth: 1,
     borderBottomWidth: 1,
-    borderTopColor: theme.colors.glass.borderTopLeft,
-    borderLeftColor: theme.colors.glass.borderTopLeft,
-    borderRightColor: theme.colors.glass.borderBottomRight,
-    borderBottomColor: theme.colors.glass.borderBottomRight,
-    ...theme.elevation.ambientNeutral,
+    borderTopColor: 'rgba(255, 255, 255, 0.8)', // Light catches top-left
+    borderLeftColor: 'rgba(255, 255, 255, 0.8)',
+    borderRightColor: 'rgba(79, 55, 138, 0.05)', // Shadows drop bottom-right
+    borderBottomColor: 'rgba(79, 55, 138, 0.05)',
+    elevation: 0, // EXTREMELY CRITICAL: Prevent Android dark shadow
   },
-  blob: {
+  ambientBlobContainer: {
     position: 'absolute',
-    width: 160,
-    height: 160,
-    borderRadius: 80,
-    opacity: 0.4,
-  },
-  blobTopRight: {
-    right: -40,
-    top: -40,
-  },
-  blobBottomLeft: {
-    left: -40,
-    bottom: -40,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   internalGloss: {
     ...StyleSheet.absoluteFill,
-    backgroundColor: theme.colors.glass.fillLow, // Simulates the from-white/10 to-transparent gradient
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // Simulates the from-white/10 to-transparent gradient
   },
   header: {
     flexDirection: 'row',

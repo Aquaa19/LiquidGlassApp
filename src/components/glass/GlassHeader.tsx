@@ -1,30 +1,20 @@
-// src/components/glass/GlassHeader.tsx
 import React from 'react';
 import { View, StyleSheet, Pressable, StyleProp, ViewStyle } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { BlurView } from '@react-native-community/blur';
 import { theme } from '../../theme/theme';
 import Text from '../core/Text';
 import Icon from '../core/Icon';
 
 interface GlassHeaderProps {
-  /** Page title */
   title: string;
-  /** Optional subtitle or description */
   subtitle?: string;
-  /** Right-side actions (e.g., buttons, avatars) */
   actions?: React.ReactNode;
-  /** Whether the header should be fixed at the top of the screen */
   sticky?: boolean;
-  /** Whether to show the back button */
   onBack?: () => void;
-  /** Additional React Native styles */
   style?: StyleProp<ViewStyle>;
 }
 
-/**
- * GlassHeader Component
- * A layout component for page headers that uses the frosted glass effect.
- * It handles the standard "Title + Subtitle + Actions" pattern found in the app.
- */
 const GlassHeader: React.FC<GlassHeaderProps> = ({
   title,
   subtitle,
@@ -33,44 +23,57 @@ const GlassHeader: React.FC<GlassHeaderProps> = ({
   onBack,
   style,
 }) => {
+  const insets = useSafeAreaInsets();
+
   return (
     <View 
       style={[
         styles.container,
         sticky && styles.sticky,
+        { paddingTop: Math.max(insets.top, 16) + 12 }, 
         style
       ]}
     >
-      <View style={styles.leftSection}>
-        {onBack && (
-          <Pressable 
-            onPress={onBack}
-            style={({ pressed }) => [
-              styles.backButton,
-              pressed && styles.backButtonPressed
-            ]}
-          >
-            <Icon name="arrow_back" size="md" color={theme.colors.onSurface} />
-          </Pressable>
-        )}
-        
-        <View style={styles.titleContainer}>
-          <Text variant="headline-md" color={theme.colors.onSurface}>
-            {title}
-          </Text>
-          {subtitle && (
-            <Text variant="label-sm" color={theme.colors.onSurfaceVariant}>
-              {subtitle}
-            </Text>
-          )}
-        </View>
-      </View>
+      {/* NATIVE BLUR LAYER */}
+      <BlurView
+        style={StyleSheet.absoluteFill}
+        blurType="light"
+        blurAmount={25}
+        reducedTransparencyFallbackColor="white"
+      />
 
-      {actions && (
-        <View style={styles.actionsContainer}>
-          {actions}
+      <View style={styles.content}>
+        <View style={styles.leftSection}>
+          {onBack && (
+            <Pressable 
+              onPress={onBack}
+              style={({ pressed }) => [
+                styles.backButton,
+                pressed && styles.backButtonPressed
+              ]}
+            >
+              <Icon name="arrow_back" size="md" color={theme.colors.onSurface} />
+            </Pressable>
+          )}
+          
+          <View style={styles.titleContainer}>
+            <Text variant="headline-md" color={theme.colors.onSurface}>
+              {title}
+            </Text>
+            {subtitle && (
+              <Text variant="label-sm" color={theme.colors.onSurfaceVariant}>
+                {subtitle}
+              </Text>
+            )}
+          </View>
         </View>
-      )}
+
+        {actions && (
+          <View style={styles.actionsContainer}>
+            {actions}
+          </View>
+        )}
+      </View>
     </View>
   );
 };
@@ -79,22 +82,24 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     paddingHorizontal: theme.spacing.gutter,
-    paddingVertical: 16,
-    backgroundColor: theme.colors.glass.fillMedium, // Simulates backdrop-blur-xl
+    paddingBottom: 16,
+    // Slightly tinted background so the blur has some color to work with
+    backgroundColor: 'rgba(255, 255, 255, 0.3)', 
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.glass.borderBottomRight,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    borderBottomColor: 'rgba(255, 255, 255, 0.4)',
     zIndex: 40,
+    overflow: 'hidden',
   },
   sticky: {
-    // In React Native, absolute positioning mimics web's sticky top-0.
-    // Ensure parent container handles SafeArea padding to avoid notch overlap.
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
+  },
+  content: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   leftSection: {
     flexDirection: 'row',
@@ -107,10 +112,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: theme.colors.glass.fillLow,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
   },
   backButtonPressed: {
-    backgroundColor: theme.colors.glass.fillHigh,
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
   },
   titleContainer: {
     justifyContent: 'center',
